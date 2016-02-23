@@ -1,12 +1,20 @@
-function [g, d] = my_lens ( f, x )
+function [g, a, b, c] = my_lens ( f, x )
+a = 0;
+b = 0;
+c = 0;
+g = 0;
 
 %getting size of the input image
 rowSize = size(f,1);
 colSize = size(f,2);
 
-imgGray = rgb2gray ( f );
+resized = imresize(f,x);
 
 %Find corners
+bw = im2bw(resized, 0.5);
+a = im2bw(resized, otsu(resized));
+
+imgGray = a;
 
 colMean = mean(imgGray, 2);
 colMean = reshape(colMean, 1, []);
@@ -34,20 +42,28 @@ d = corners;
 % if (minColDeltaIndex >= rowSize/2)
 %    disp('MISSALIGNED'); 
 % end
+disp(x) 
 disp([minRowDeltaIndex, minColDeltaIndex, maxRowDeltaIndex, maxColDeltaIndex]);
 disp(corners);
 
 %crop
 g = imcrop(f,corners);
-
-%Rotate
-
-%Equalize Color
-% g = histEqualize(g);
-
-% resize
+% 
+% %Rotate
+% 
+% %Equalize Color
+% % g = histEqualize(g);
+% 
+% % resize
 g = imresize ( g, x );
-% g = 1;
+
+function [c] = fcheckCorner(im)
+    c = 0;
+    
+    
+function [o] = otsu(im)
+%     o = graythresh(im);
+    o = 0.40;
 
 function [o] = histEqualize(f)
     % convert to grayscale

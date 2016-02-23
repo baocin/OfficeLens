@@ -34,13 +34,13 @@ for i = inputImageN0:inputImageN1
     %run my_lens
     [g, a, b, c] = my_lens(f,x);
     
-    output_test_im_name = sprintf('%sOffice_Lens_Output_%d_G.jpg',...
+    output_test_im_name = sprintf('%sOffice_Lens_Output_%d_A.jpg',...
         output_folder, i );
     imwrite(g, output_test_im_name);
     
     output_test_im_name = sprintf('%sOffice_Lens_Output_%d_A.jpg',...
         output_folder, i );
-    imwrite(a, output_test_im_name);
+    imwrite(g, output_test_im_name);
 
     if (b ~= 0)
     output_test_im_name = sprintf('%sOffice_Lens_Output_%d_B.jpg',...
