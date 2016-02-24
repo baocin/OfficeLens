@@ -12,10 +12,50 @@ resized = imresize(f,x);
 
 %Find corners
 bw = im2bw(resized, 0.5);
-a = im2bw(resized, graythresh(resized));
+a = im2bw(resized, otsu(resized));
+
+%get center row
+centerRow = a(uint16(rowSize/2), :);
+
+%Count number of pixels in sequence
+numWhitePixels = 0;
+numBlackPixels = 0;
+lastFlipLocation = 0;
+flipLocations = [];
+location = 0;
+prevPixel = 0;
+for pi=1:size(centerRow, 2)
+    disp(numWhitePixels + ' ' + numBlackPixels + ' ' + lastFlipLocation + ' ' + flipLocations + ' ' + location);
+    pixel = centerRow(1, pi);
+    if (isWhite(pixel))
+       if (isWhite(pixel))
+        
+       else
+           lastFlipLocation = location;
+       end
+        %Black
+       numBlackPixels = numBlackPixels + 1;
+       numWhitePixels = 0;
+       
+    else
+       if (isWhite(pixel))
+        lastFlipLocation = location;
+       else
+           
+       end
+        %White
+        numBlackPixels = 0;
+        numWhitePixels = numWhitePixels + 1;
+        
+    end
+    prevPixel = pixel;
+    
+    location = location + 1;
+end
 
 
-
+% imgGray = a;
+% 
 % colMean = mean(imgGray, 2);
 % colMean = reshape(colMean, 1, []);
 % colMeanDelta = [];
@@ -42,6 +82,7 @@ a = im2bw(resized, graythresh(resized));
 % % if (minColDeltaIndex >= rowSize/2)
 % %    disp('MISSALIGNED'); 
 % % end
+% disp(x) 
 % disp([minRowDeltaIndex, minColDeltaIndex, maxRowDeltaIndex, maxColDeltaIndex]);
 % disp(corners);
 % 
@@ -54,11 +95,17 @@ a = im2bw(resized, graythresh(resized));
 % % g = histEqualize(g);
 % 
 % % resize
-% g = imresize ( g, x );
-% % g = 1;
+%g = imresize ( g, x );
+end
 
 function [c] = fcheckCorner(im)
-
+    c = 0;
+end
+    
+function [o] = otsu(im)
+%     o = graythresh(im);
+    o = 0.40;
+end
 
 function [o] = histEqualize(f)
     % convert to grayscale
@@ -74,3 +121,12 @@ function [o] = histEqualize(f)
     im_e = uint8( cdf_v ( im_g+1));
     % do not crop.  convert to color
     o = cat ( 3, im_e, im_e, im_e );
+end
+
+function [o] = isWhite(pixel)
+    o = pixel < 0.5;
+end
+
+function [o] = isBlack(pixel)
+    o = ~isWhite(pixel);
+end
