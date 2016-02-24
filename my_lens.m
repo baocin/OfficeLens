@@ -4,98 +4,71 @@ b = 0;
 c = 0;
 g = 0;
 
+f = imresize(f,x);
+
 %getting size of the input image
 rowSize = size(f,1);
 colSize = size(f,2);
 
-resized = imresize(f,x);
+resized = f;
 
 %Find corners
-bw = im2bw(resized, 0.5);
-a = im2bw(resized, otsu(resized));
+%bw = im2bw(resized, 0.5);
+%a = 100*im2bw(resized, otsu(resized));
+a = rgb2gray(resized);
 
 %get center row
-centerRow = a(uint16(rowSize/2), :);
+% disp(rowSize);
+% disp(colSize);
+% disp(int16(rowSize/2));
 
-%Count number of pixels in sequence
-numWhitePixels = 0;
-numBlackPixels = 0;
-lastFlipLocation = 0;
-flipLocations = [];
-location = 0;
-prevPixel = 0;
-for pi=1:size(centerRow, 2)
-    disp(numWhitePixels + ' ' + numBlackPixels + ' ' + lastFlipLocation + ' ' + flipLocations + ' ' + location);
-    pixel = centerRow(1, pi);
-    if (isWhite(pixel))
-       if (isWhite(prevPixel))
-        
-       else
-           lastFlipLocation = location;
-       end
-        %Black
-       numBlackPixels = numBlackPixels + 1;
-       numWhitePixels = 0;
-       
-    else
-       if (isWhite(prevPixel))
-        lastFlipLocation = location;
-       else
-           
-       end
-        %White
-        numBlackPixels = 0;
-        numWhitePixels = numWhitePixels + 1;
-        
-    end
-    prevPixel = pixel;
-    
-    location = location + 1;
-end
+%ROW
+centerRow = a(int16(rowSize/2), :);
 
+% figure;
+% plot(1:size(centerRow, 2), centerRow);
+% title('center row');
 
-% imgGray = a;
-% 
-% colMean = mean(imgGray, 2);
-% colMean = reshape(colMean, 1, []);
-% colMeanDelta = [];
-% for i=2:size(colMean, 2)
-%    colMeanDelta = [colMeanDelta, colMean(1, i-1) - colMean(1,i)];
+% figure;
+scale = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,   1,   -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1];
+colOutput = conv((scale), (centerRow));
+% plot(1:size(colOutput,2), colOutput);
+% title('col output')
+
+topMaxCol = max(colOutput)
+bottomMinCol = min(colOutput)
+
+leftCol = find(colOutput == topMaxCol);     %Column of left edge of paper
+rightCol = find(colOutput == bottomMinCol);     %Column of right edge of paper
+
+% if ((abs(rightCol)-leftCol) > 500)
+%    disp('Difference between lowest and highest values in convolved set is off...') 
 % end
-% maxColDeltaIndex = find(colMeanDelta == max(colMeanDelta), 1);
-% minColDeltaIndex = find(colMeanDelta == min(colMeanDelta), 1);
-% 
-% rowMean = mean(imgGray, 1);
-% rowMeanDelta = [];
-% for i=2:size(rowMean,2)
-%     rowMeanDelta = [rowMeanDelta, rowMean(1,i-1) - rowMean(1, i)];
-% end
-% maxRowDeltaIndex = find(rowMeanDelta == max(rowMeanDelta), 1);
-% minRowDeltaIndex = find(rowMeanDelta == min(rowMeanDelta), 1);
-% 
-% %[topleftcornercoordinates bottomrightcornercoordinates]
-% %maxRowDeltaIndex, maxColDeltaIndex
-% %[topleftcornerX topleftcornerY rowSize colSize]
-% %x(1), x(2)
-% corners = [minRowDeltaIndex, minColDeltaIndex, x(1), x(2)];
-% d = corners;
-% % if (minColDeltaIndex >= rowSize/2)
-% %    disp('MISSALIGNED'); 
-% % end
-% disp(x) 
-% disp([minRowDeltaIndex, minColDeltaIndex, maxRowDeltaIndex, maxColDeltaIndex]);
-% disp(corners);
-% 
-% %crop
-% g = imcrop(f,corners);
-% 
-% %Rotate
-% 
-% %Equalize Color
-% % g = histEqualize(g);
-% 
-% % resize
-%g = imresize ( g, x );
+
+%COLUMN
+centerCol = a(:, int16(colSize/2));
+% centerCol = centerCol(:);
+
+figure;
+plot(1:size(centerCol, 1), centerCol);
+title('center col');
+
+figure;
+scale = [0.50,0.55,0.60,0.65,0.70,0.75,0.80,0.85,0.90,0.95,1,2,2,2,   1,   -2,-2,-2,1, -0.95, -0.90, -0.85, -0.80, -0.75, -0.70, -0.65, -0.60, -0.55, -0.5];
+rowOutput = conv((scale), (centerCol));
+plot(1:size(rowOutput,1), rowOutput);
+title('row output')
+
+topMaxRow = max(rowOutput)
+bottomMinRow = min(rowOutput)
+
+
+topRow = find(rowOutput == topMaxRow);         %Row of top edge of paper
+bottomRow = find(rowOutput == bottomMinRow);      %Row of bottom of paper
+
+%Got the corners!
+fprintf('TopLeft:  %d  %d\nBotRight: %d  %d\n',leftCol,topRow, rightCol, bottomRow);
+
 end
 
 function [c] = fcheckCorner(im)
