@@ -12,6 +12,7 @@ enableFigures = 0;
 
 %||||||||||||| >-|-[0-:] FIND THE CORNERS [:-0]-|-< |||||||||||||||||||||
 
+
 a = rgb2gray(f);
 b = rgb2ind(f,2);
 
@@ -39,7 +40,7 @@ end
 % location. This means I can emphasize locations of an image that change
 % between dark and white by using the below scaling function.
 
-scale = [0.5, 0.5, 0.5, 0.5, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,   1,    -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5];
+scale = [0.5, 0.5, 0.5, 0.5, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,   1,    -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5];
 colOutput = conv(single(scale), single(centerRow));
 bColOutput = conv(single(scale), single(bCenterRow));
 
@@ -129,11 +130,11 @@ end
 if ((bottomRow - topRow) < 1000)
     disp('ERROR!!!!!  bottomRow - topRow < 1000');
 %     fprintf('topRow:%d   bottomRow:%d\n', topRow, bottomRow);
-     [~, index] = sort(rowOutput); %Sort all values from lowest to highest
-     topRow = index(end-4);
-     bottomRow = index(4);
-%         topRow = bTopRow;
-%         bottomRow = bBottomRow;
+%      [~, index] = sort(rowOutput); %Sort all values from lowest to highest
+%      topRow = index(end-1);
+%      bottomRow = index(2);
+        topRow = bTopRow;
+        bottomRow = bBottomRow;
 %     topRow = index(end-1);
 %     bottomRow = index(2);
 %     %Sort the index values of the 10 highest magnitudes(the possible positions for the left edge of the page)
