@@ -1,30 +1,26 @@
-function [g, a, b, c] = my_lens ( f, x )
-a = 0;
-b = 0;
-c = 0;
-g = 0;
-
+function [g] = my_lens ( f, x )
 %getting size of the input image
 rowSize = size(f,1);
 colSize = size(f,2);
 
-%Find corners
-%bw = im2bw(resized, 0.5);
-%a = im2bw(resized, otsu(resized));
-% a = rgb2gray(resized);
-a = rgb2gray(f);
+%Enable all = 2;
+%Enable orig and cropped = 2;
+%Enable charts = 1;
+%just org and cropped = -1;
+enableFigures = 0;
 
-%get center row
-% disp(rowSize);
-% disp(colSize);
-% disp(int16(rowSize/2));
+%||||||||||||| >-|-[0-:] FIND THE CORNERS [:-0]-|-< |||||||||||||||||||||
+%a = rgb2gray(f);
+a = rgb2ind(f,2);
 
-%|||||||||||||||||||||||||  ROW  |||||||||||||||||||||||||||||||||
+%-------------------------------  ROW  -------------------------------
 centerRow = a(int16(rowSize/2), :);
 
-figure;
-plot(1:size(centerRow, 2), centerRow);
-title('center row');
+if(enableFigures >= 1)
+    figure;
+    plot(1:size(centerRow, 2), centerRow);
+    title('center row');
+end
 
 %This will take the scale array and calculate the following for every point
 %in the data(this case its colOutput):
@@ -35,21 +31,36 @@ title('center row');
 % end
 % end
 % Thereby producing an array.
-figure;
-scale = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,   1,    -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1];
-colOutput = conv(single(scale), single(centerRow));
-plot(1:size(colOutput,2), colOutput);
-title('col output')
 
-%Sort entire row by magnitude
-[sorted, index] = sort(colOutput); %Sort all values from lowest to highest
-leftCol = index(end);
-rightCol = index(1);
+% scale = [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,   1,    -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5];scale = [0.5, 0.5, 0.5, 0.5, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,5,2,2,2,5,   1,    -5,-2,-2,-2,-5,-2,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5];
+%scale = [0.5, 0.5, 0.5, 0.5, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,5,2,2,2,5,   1,    -5,-2,-2,-2,-5,-2,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5];
+scale = [0.5, 0.5, 0.5, 0.5, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,   1,    -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5];
+%[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,   1,    -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1];
+
+%scale = [0.5, 0.5, 0.5, 0.5,0.5, 0.5, 0.5, 0.5,0.5, 0.5, 0.5, 0.5,   -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5];
+
+colOutput = conv(single(scale), single(centerRow));
+
+if(enableFigures >= 1)
+    figure;
+    plot(1:size(colOutput,2), colOutput);
+    title('col output')
+end
+
+%Find the highest peak(start of the paper) and the lowest valley(end of paper)
+[~, leftCol] = max(colOutput);
+[~, rightCol] = min(colOutput);
+% leftCol = find(colOutput == max(max(colOutput)));
+% rightCol = find(colOutput == min(min(colOutput)));
+% 
+% leftCol = index(end);
+% rightCol = index(1);
 
 %Something is wrong if the edge columns are too close (say, 500px)
 if ((rightCol - leftCol) < 1000)
     disp('ERROR!!!!!  rightCOl - leftCOl < 1000');
-    fprintf('rightCol:%d   leftCol:%d\n', rightCol, leftCol);
+%     fprintf('rightCol:%d   leftCol:%d\n', rightCol, leftCol);
+    [~, index] = sort(colOutput); %Sort all values from lowest to highest
     leftCol = index(end-1);
     rightCol = index(2);
 %     %Sort the index values of the 2 highest magnitudes(the possible positions for the left edge of the page)
@@ -61,24 +72,28 @@ if ((rightCol - leftCol) < 1000)
 %     [ rightSorted, rightIndex ] = sort(index(1:2));
 %     %Take the highest index from the sorted list(closer to the right of the image)
 %     rightCol = rightSorted(2);
-    fprintf('rightCol:%d   leftCol:%d \n', rightCol, leftCol);
+%     fprintf('rightCol:%d   leftCol:%d \n', rightCol, leftCol);
 end
 
 
 
-%|||||||||||||||||||||||||  COLUMN   |||||||||||||||||||||||||||||||||
+%-------------------------------  COLUMN   -------------------------------
 centerCol = a(:, int16(colSize/2));
 % centerCol = centerCol(:);
 
-figure;
-plot(1:size(centerCol, 1), centerCol);
-title('center col');
+if(enableFigures >= 1)
+    figure;
+    plot(1:size(centerCol, 1), centerCol);
+    title('center col');
+end
 
-figure;
 rowOutput = conv(single(scale), single(centerCol));
-plot(1:size(rowOutput,1), rowOutput);
-title('row output');
 
+if(enableFigures >= 1)
+    figure;
+    plot(1:size(rowOutput,1), rowOutput);
+    title('row output');
+end
 
 %Sort entire col by magnitude
 % numCenterPixelsToRemove = 200;
@@ -92,14 +107,20 @@ title('row output');
 % rowOutput = rowOutput(1:leftCutoff) + placeholderZeros + rowOutput(rightCutoff:end);
 % disp(size(rowOutput,2))
 
-[sorted, index] = sort(rowOutput); %Sort all values from lowest to highest
-topRow = index(end);
-bottomRow = index(1);
 
+%Find the highest peak(start of the paper) and the lowest valley(end of paper)
+[ ~, topRow] = max(rowOutput);
+[ ~, bottomRow] = min(rowOutput);
+% bottomRow = find(rowOutput == min(min(rowOutput)));
+% disp(topRow);
+% disp(bottomRow);
 %Something is wrong if the edge columns are too close (say, 500px)
 if ((bottomRow - topRow) < 1000)
     disp('ERROR!!!!!  bottomRow - topRow < 1000');
-    fprintf('topRow:%d   bottomRow:%d\n', topRow, bottomRow);
+%     fprintf('topRow:%d   bottomRow:%d\n', topRow, bottomRow);
+     [~, index] = sort(rowOutput); %Sort all values from lowest to highest
+     topRow = index(end-1);
+     bottomRow = index(2);
 %     topRow = index(end-1);
 %     bottomRow = index(2);
 %     %Sort the index values of the 10 highest magnitudes(the possible positions for the left edge of the page)
@@ -110,28 +131,49 @@ if ((bottomRow - topRow) < 1000)
 %     topRow = topSorted(end);
 %     %Take the highest index from the sorted list(closer to the right of the image)
 %     bottomRow = topSorted(1);
-    fprintf('topRow:%d   bottomRow:%d\n', topRow, bottomRow);
+%     fprintf('topRow:%d   bottomRow:%d\n', topRow, bottomRow);
 end
 
 %DONE WITH CONVOLUTIONNNNNNN!
 
 %Got the corners!
-fprintf('TopLeft:  %d  %d\nBotRight: %d  %d\n',topRow, leftCol, bottomRow, rightCol);%leftCol,topRow, rightCol, bottomRow);
+fprintf('TopLeft:  %d  %d\nBotRight: %d  %d\n',leftCol, topRow, rightCol, bottomRow);%leftCol,topRow, rightCol, bottomRow);
 
 % ||||||||||||||||||||||||| CROPPING |||||||||||||||||||||||||||||||||||
-figure;
-imshow(f);
-cropped = imcrop(f,[leftCol, topRow, rightCol-leftCol, bottomRow-topRow]);
-figure;
-imshow(cropped);
+if(enableFigures >= 2  || enableFigures == -1)
+    figure;
+    imshow(f);
+end
 
+if (leftCol >= rightCol)
+%    disp('ERROR left edge is further right than right edge'); 
+   leftCol = 0;
+   rightCol = 10;
+end
+
+if (topRow >= bottomRow)
+%    disp('ERROR top edge is further down than bottom edge');
+   topRow = 0;
+   bottomRow = 10;
+end
+
+try
+cropped = imcrop(f,[leftCol, topRow, rightCol-leftCol, bottomRow-topRow]);
+
+if(enableFigures >= 2 || enableFigures == -1)
+    figure;
+    imshow(cropped);
+end
 
 %|||||||||||||||||||||||| RESIZING |||||||||||||||||||||||||||||||||||||
 cropped = imresize(cropped,x);
 
 %|||||||||||||||||||||||||  EQUALIZE ||||||||||||||||||||||||||||||||
-cropped = histEqualize(cropped);
+% cropped = histEqualize(cropped);
 g = cropped;
+catch
+    g = 0;
+end
 
 end
 
